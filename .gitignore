@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+library/
+duo.db
+admin_password.txt

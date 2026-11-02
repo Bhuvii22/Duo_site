@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Duo</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Join screen -->
+  <main id="join" class="card join">
+    <h1>Duo</h1>
+    <p class="muted">Listen to the same song, at the same moment, from anywhere.</p>
+    <form id="join-form">
+      <label>Your name
+        <input id="name" maxlength="40" required autocomplete="nickname" placeholder="e.g. Priya">
+      </label>
+      <label>Room code
+        <input id="room" maxlength="12" placeholder="Leave empty to create a new room">
+      </label>
+      <button type="submit" class="primary">Join room</button>
+    </form>
+  </main>
+
+  <!-- Room screen: one screen, panels scroll on their own, player pinned to the bottom -->
+  <main id="app" class="app hidden">
+    <header class="topbar">
+      <div class="brand">Duo</div>
+      <div class="room-chip">
+        <span class="muted">Room</span>
+        <strong id="room-code"></strong>
+        <button id="copy-link" class="chip-btn" title="Copy a link your friends can open">Copy invite link</button>
+      </div>
+      <div class="top-right">
+        <span id="conn" class="pill">connecting…</span>
+        <button id="leave" class="ghost">Leave</button>
+      </div>
+    </header>
+
+    <!-- Phones: one panel at a time -->
+    <nav id="tabs" class="tabs">
+      <button data-panel="music" class="active">Music</button>
+      <button data-panel="queue">Up next <span id="queue-count" class="badge"></span></button>
+      <button data-panel="chat">Chat <span id="chat-unread" class="badge alert hidden"></span></button>
+    </nav>
+
+    <div id="layout" class="layout" data-active="music">
+      <div id="video-wrap" class="video-wrap hidden"><div id="yt"></div></div>
+
+      <section id="panel-music" class="panel">
+        <div class="panel-head">
+          <div class="seg">
+            <button id="tab-library" class="active">Library <span id="lib-count" class="badge"></span></button>
+            <button id="tab-youtube">YouTube</button>
+          </div>
+        </div>
+
+        <div id="view-library" class="view">
+          <div class="toolbar">
+            <input id="lib-search" type="search" placeholder="Search library…">
+            <label class="tool-btn" title="Upload songs or .zip files">
+              Upload
+              <input id="file" type="file" accept="audio/*,.mp3,.m4a,.flac,.ogg,.opus,.wav,.zip" multiple hidden>
+            </label>
+            <label class="tool-btn" title="Upload a whole folder of songs">
+              Folder
+              <input id="folder" type="file" webkitdirectory multiple hidden>
+            </label>
+          </div>
+          <div id="upload-status" class="status"></div>
+          <ul id="library" class="list scroll"></ul>
+          <div class="panel-foot">
+            <span class="muted small">Uploads stay here for every room · zips are unpacked</span>
+            <button id="add-all" class="ghost">Queue all</button>
+          </div>
+        </div>
+
+        <div id="view-youtube" class="view hidden">
+          <form id="yt-form" class="toolbar">
+            <input id="yt-input" type="search" placeholder="Search songs or paste a YouTube link…" autocomplete="off">
+            <button class="primary">Go</button>
+            <button type="button" id="yt-download" class="icon-btn" title="Download this link's song into the library" aria-label="Download to library">
+              <svg viewBox="0 0 24 24"><path d="M11 4h2v9.17l3.59-3.58L18 11l-6 6-6-6 1.41-1.41L11 13.17zM5 18h14v2H5z"/></svg>
+            </button>
+          </form>
+          <div id="yt-status" class="status"></div>
+          <ul id="yt-results" class="list scroll"></ul>
+        </div>
+      </section>
+
+      <section id="panel-queue" class="panel">
+        <div class="panel-head">
+          <h2>Up next</h2>
+          <button id="clear-queue" class="ghost">Clear</button>
+        </div>
+        <ol id="queue" class="list scroll"></ol>
+      </section>
+
+      <section id="panel-chat" class="panel">
+        <div class="panel-head">
+          <h2>Listening <span id="count" class="badge"></span></h2>
+        </div>
+        <ul id="members" class="members"></ul>
+        <div id="chat" class="chat scroll"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" maxlength="500" placeholder="Say something…" autocomplete="off">
+          <button class="primary">Send</button>
+        </form>
+      </section>
+    </div>
+
+    <footer class="player-bar">
+      <div class="pb-now">
+        <div id="art" class="art" aria-hidden="true">♪</div>
+        <div class="pb-text">
+          <div id="title" class="title">Nothing playing</div>
+          <div id="by" class="muted small">Pick a song to start</div>
+        </div>
+      </div>
+
+      <div class="pb-center">
+        <div class="controls">
+          <button id="prev" class="ctl" aria-label="Previous song" title="Previous song">
+            <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zM9.5 12 18 6v12z"/></svg>
+          </button>
+          <button id="back10" class="ctl" aria-label="Back 10 seconds" title="Back 10 seconds (←)">
+            <svg viewBox="0 0 24 24"><path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/><text x="12" y="16" text-anchor="middle">10</text></svg>
+          </button>
+          <button id="toggle" class="ctl big" aria-label="Play" title="Play / pause (Space)">
+            <svg class="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+          </button>
+          <button id="fwd10" class="ctl" aria-label="Forward 10 seconds" title="Forward 10 seconds (→)">
+            <svg viewBox="0 0 24 24"><path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16" text-anchor="middle">10</text></svg>
+          </button>
+          <button id="next" class="ctl" aria-label="Next song" title="Next song">
+            <svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z"/></svg>
+          </button>
+          <span id="skip-flash" class="skip-flash" aria-live="polite"></span>
+        </div>
+        <div class="seek">
+          <span id="cur">0:00</span>
+          <input id="seek" type="range" min="0" max="0" step="0.1" value="0" aria-label="Seek">
+          <span id="dur">0:00</span>
+        </div>
+        <button id="unlock" class="primary hidden">Tap to start listening</button>
+        <div id="loading" class="loading hidden">Loading the song… you'll join right where everyone is.</div>
+      </div>
+
+      <div class="pb-right">
+        <div class="volume">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>
+          <input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume">
+        </div>
+        <div id="sync" class="muted tiny"></div>
+      </div>
+    </footer>
+  </main>
+
+  <audio id="audio" preload="auto"></audio>
+  <script src="upload.js"></script>
+  <script src="app.js"></script>
+  <script src="https://www.youtube.com/iframe_api" async></script>
+</body>
+</html>

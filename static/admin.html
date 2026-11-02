@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Duo Admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Login -->
+  <main id="login" class="card join hidden">
+    <h1>Duo Admin</h1>
+    <p class="muted">Sign in to see room history and manage the common library.</p>
+    <form id="login-form">
+      <label>Password
+        <input id="password" type="password" required autocomplete="current-password">
+      </label>
+      <button type="submit" class="primary">Sign in</button>
+      <div id="login-error" class="error small"></div>
+    </form>
+  </main>
+
+  <!-- Dashboard -->
+  <main id="admin" class="admin hidden">
+    <header class="topbar">
+      <h1>Duo Admin</h1>
+      <div class="room-info"><a href="/" class="muted">Open Duo ↗</a></div>
+      <button id="logout" class="ghost">Sign out</button>
+    </header>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Live rooms <span id="room-count" class="pill"></span></h2>
+        <span class="muted small">Updates every 5 seconds</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Room</th><th>Listening now</th><th>Now playing</th><th>Queue</th></tr></thead>
+          <tbody id="rooms"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>History</h2>
+        <button id="refresh-history" class="ghost">Refresh</button>
+      </div>
+      <form id="filters" class="filters">
+        <input id="f-room" placeholder="Room code" maxlength="12">
+        <input id="f-user" placeholder="Name" maxlength="40">
+        <select id="f-event">
+          <option value="">All activity</option>
+          <option value="joined">Joined room</option>
+          <option value="left">Left room</option>
+          <option value="queued">Added to queue</option>
+          <option value="played">Played now</option>
+          <option value="uploaded">Uploaded to library</option>
+          <option value="deleted">Deleted from library</option>
+        </select>
+        <button class="primary">Filter</button>
+      </form>
+      <div class="table-wrap history-wrap">
+        <table>
+          <thead><tr><th>Time</th><th>Room</th><th>Name</th><th>Activity</th><th>Details</th></tr></thead>
+          <tbody id="history"></tbody>
+        </table>
+      </div>
+      <button id="more" class="ghost more hidden">Load older</button>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Common library <span id="lib-count" class="pill"></span></h2>
+        <div class="row">
+          <label class="ghost file-btn">Upload files
+            <input id="file" type="file" accept="audio/*,.mp3,.m4a,.flac,.ogg,.opus,.wav,.zip" multiple hidden>
+          </label>
+          <label class="primary file-btn">Upload folder
+            <input id="folder" type="file" webkitdirectory multiple hidden>
+          </label>
+        </div>
+      </div>
+      <p class="muted small">Songs added here are available in every room. Zip files are unpacked automatically.</p>
+      <div id="upload-status" class="muted small"></div>
+      <input id="lib-search" type="search" placeholder="Search the library…">
+      <ul id="library" class="list library"></ul>
+    </section>
+  </main>
+
+  <script src="upload.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
